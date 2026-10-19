@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmar Identidad</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body class="confirm-body">
+    <div class="confirm-card">
+        <div class="confirm-icon">&#128274;</div>
+        <h2>Confirmar Identidad</h2>
+        <p>Ingresa tu contrasena de administrador para continuar</p>
+        <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+        <form th:action="@{/usuarios/verificar}" method="post">
+            <input type="hidden" name="editarId" th:value="${editarId}" />
+            <div class="form-group">
+                <label>Contrasena del Administrador</label>
+                <input type="password" name="adminPassword" required autofocus placeholder="Ingresa tu contrasena" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Verificar y Continuar</button>
+            <a href="/dashboard" class="btn-secondary-block">Cancelar</a>
+        </form>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

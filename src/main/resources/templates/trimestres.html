@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Periodos</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <a href="/dashboard">&#8592; Volver al Dashboard</a>
+    </nav>
+    <div class="main">
+        <div class="header">
+            <h1>&#128197; Periodos Academicos</h1>
+            <a sec:authorize="hasRole('ADMIN')" href="/trimestres/nuevo" class="btn btn-primary">+ Nuevo Periodo</a>
+        </div>
+        <div th:if="${mensaje}" class="alert-success" th:text="${mensaje}"></div>
+        <div th:if="${error}"   class="alert-error"   th:text="${error}"></div>
+        <div class="search-bar">
+            <span>&#128269;</span>
+            <input type="text" id="buscador" placeholder="Buscar por nombre o estado..." onkeyup="filtrar()"/>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Asistencias</th>
+                    <th>Estado</th>
+                    <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody">
+                <tr th:each="t : ${trimestres}">
+                    <td th:text="${t.id_trimestre}"></td>
+                    <td th:text="${t.nombre}"></td>
+                    <td th:text="${t.fecha_inicio}"></td>
+                    <td th:text="${t.fecha_fin}"></td>
+                    <td th:text="${conteos[t.id_trimestre]}"></td>
+                    <td>
+                        <span th:if="${t.activo}"  class="badge-active">Activo</span>
+                        <span th:if="${!t.activo}" class="badge-inactive">Inactivo</span>
+                    </td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <div class="actions">
+                            <a th:href="@{/trimestres/editar/{id}(id=${t.id_trimestre})}" class="btn-warning">Editar</a>
+                            <a th:if="${!t.activo}" th:href="@{/trimestres/activar/{id}(id=${t.id_trimestre})}" class="btn-success">Activar</a>
+                            <a th:href="@{/trimestres/eliminar/{id}(id=${t.id_trimestre})}" class="btn-danger" onclick="return confirm('Eliminar periodo?')">Eliminar</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(trimestres)}">
+                    <td colspan="7" class="empty">No hay periodos registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

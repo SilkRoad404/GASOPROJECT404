@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!-- Hoja de estilos principal -->
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body class="login-body">
+    <!-- Contenedor principal del formulario de login -->
+    <div class="login-card">
+        <h2>Iniciar Sesion</h2>
+        <p class="subtitle">Sistema de Control de Asistencia</p>
+
+        <!-- Formulario de autenticación, envía POST a /login -->
+        <form th:action="@{/login}" method="post">
+
+            <!-- Mensaje de error si las credenciales son incorrectas -->
+            <div th:if="${param.error}" class="login-error">Credenciales Incorrectas</div>
+
+            <!-- Campo de usuario -->
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" name="username" placeholder="Ingresa tu usuario" required/>
+            </div>
+
+            <!-- Campo de contraseña -->
+            <div class="form-group">
+                <label>Contrasena</label>
+                <input type="password" name="password" placeholder="Ingresa tu contrasena" required/>
+            </div>
+
+            <!-- Botón de envío -->
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <!-- Script principal -->
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

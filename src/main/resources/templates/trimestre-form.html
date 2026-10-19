@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Periodo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a202c; color: #e2e8f0; }
+        .navbar { background: #2d3748; padding: 14px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar a { color: #a0aec0; text-decoration: none; font-size: 14px; }
+        .brand { font-size: 18px; font-weight: 700; }
+        .main { max-width: 500px; margin: 40px auto; padding: 0 20px; }
+        .card { background: #2d3748; border-radius: 12px; padding: 32px; }
+        .card h2 { margin-bottom: 24px; font-size: 20px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; color: #a0aec0; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 10px 14px; background: #1a202c; border: 1px solid #4a5568; border-radius: 8px; color: #e2e8f0; font-size: 14px; outline: none; }
+        input:focus, select:focus { border-color: #ed8936; }
+        .btn { width: 100%; padding: 11px; background: #ed8936; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+        .btn:hover { background: #dd6b20; }
+        .btn-back { display: block; text-align: center; margin-top: 12px; color: #a0aec0; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">📋 Sistema de Asistencia</div>
+        <a href="/trimestres">← Volver a Periodos</a>
+    </nav>
+    <div class="main">
+        <div class="card">
+            <h2>📅 Datos del Periodo</h2>
+            <form th:action="@{/trimestres/guardar}" th:object="${trimestre}" method="post">
+                <input type="hidden" th:field="*{id_trimestre}"/>
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" th:field="*{nombre}" required/>
+                </div>
+                <div class="form-group">
+                    <label>Fecha Inicio</label>
+                    <input type="date" th:field="*{fecha_inicio}" required/>
+                </div>
+                <div class="form-group">
+                    <label>Fecha Fin</label>
+                    <input type="date" th:field="*{fecha_fin}" required/>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select name="activo">
+                        <option value="true" th:selected="${trimestre.activo == true}">Activo</option>
+                        <option value="false" th:selected="${trimestre.activo == false}">Inactivo</option>
+                    </select>
+                </div>
+                <button class="btn" type="submit">Guardar</button>
+                <a href="/trimestres" class="btn-back">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

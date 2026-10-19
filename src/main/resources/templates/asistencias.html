@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Asistencias</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <a href="/dashboard">&#8592; Volver al Dashboard</a>
+    </nav>
+    <div class="main">
+        <div class="header">
+            <h1>&#9989; Asistencias</h1>
+            <a sec:authorize="hasRole('ADMIN')" href="/asistencias/nuevo" class="btn btn-primary">+ Nueva Asistencia</a>
+        </div>
+        <form method="get" action="/asistencias">
+            <div class="filtros">
+                <div class="grupo">
+                    <label>Periodo</label>
+                    <select name="trimestre">
+                        <option value="">Todos los periodos</option>
+                        <option th:each="t : ${trimestres}" th:value="${t.id_trimestre}" th:text="${t.nombre}" th:selected="${t.id_trimestre == trimestreSeleccionado}"></option>
+                    </select>
+                </div>
+                <div class="grupo">
+                    <label>Grado</label>
+                    <select name="grado">
+                        <option value="">Todos los grados</option>
+                        <option value="1RO TDS" th:selected="${'1RO TDS' == gradoSeleccionado}">1ro Tecnico en Desarrollo de Software</option>
+                        <option value="2 TDS"   th:selected="${'2 TDS'   == gradoSeleccionado}">2do Tecnico en Desarrollo de Software</option>
+                        <option value="3 TDS"   th:selected="${'3 TDS'   == gradoSeleccionado}">3ro Tecnico en Desarrollo de Software</option>
+                        <option value="1RO TVC" th:selected="${'1RO TVC' == gradoSeleccionado}">1ro Tecnico Vocacional Contable</option>
+                        <option value="2 TVC"   th:selected="${'2 TVC'   == gradoSeleccionado}">2do Tecnico Vocacional Contable</option>
+                        <option value="3 TVC"   th:selected="${'3 TVC'   == gradoSeleccionado}">3ro Tecnico Vocacional Contable</option>
+                        <option value="1RO GEN" th:selected="${'1RO GEN' == gradoSeleccionado}">1ro General</option>
+                        <option value="2 GEN"   th:selected="${'2 GEN'   == gradoSeleccionado}">2do General</option>
+                    </select>
+                </div>
+                <div class="grupo">
+                    <label>Seccion</label>
+                    <select name="seccion">
+                        <option value="">Todas las secciones</option>
+                        <option th:each="s : ${secciones}" th:value="${s}" th:text="${s}" th:selected="${s == seccionSeleccionada}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-filter">&#128269; Filtrar</button>
+                <a href="/asistencias" class="btn-clear">&#10005; Limpiar</a>
+            </div>
+        </form>
+        <div class="search-bar">
+            <span>&#128269;</span>
+            <input type="text" id="buscador" placeholder="Buscar por alumno, estado, fecha..." onkeyup="filtrar()"/>
+        </div>
+        <div class="resumen">
+            <div class="chip">Total: <span th:text="${#lists.size(asistencias)}">0</span></div>
+            <div class="chip">Presentes: <span th:text="${#lists.size(asistencias.?[estado == 'P'])}">0</span></div>
+            <div class="chip">Faltas: <span th:text="${#lists.size(asistencias.?[estado == 'F'])}">0</span></div>
+            <div class="chip">Sin Permiso: <span th:text="${#lists.size(asistencias.?[estado == 'SP'])}">0</span></div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Alumno</th><th>Grado</th><th>Seccion</th><th>Periodo</th>
+                    <th>Estado</th><th>Fecha</th><th>Observacion</th>
+                    <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody">
+                <tr th:each="a : ${asistencias}">
+                    <td th:text="${a.id_asistencia}"></td>
+                    <td th:text="${nombresAlumnos[a.id_alumno]}"></td>
+                    <td th:with="g=${gradoAlumnos[a.id_alumno]}"
+                        th:text="${g == '1RO TDS' ? '1ro Tec. Desarrollo de Software' :
+                                  g == '2 TDS'   ? '2do Tec. Desarrollo de Software' :
+                                  g == '3 TDS'   ? '3ro Tec. Desarrollo de Software' :
+                                  g == '1RO TVC' ? '1ro Tec. Vocacional Contable' :
+                                  g == '2 TVC'   ? '2do Tec. Vocacional Contable' :
+                                  g == '3 TVC'   ? '3ro Tec. Vocacional Contable' :
+                                  g == '1RO GEN' ? '1ro General' :
+                                  g == '2 GEN'   ? '2do General' : g}"></td>
+                    <td th:text="${seccionAlumnos[a.id_alumno]}"></td>
+                    <td th:text="${nombresTrimestres[a.id_trimestre]}"></td>
+                    <td>
+                        <span th:if="${a.estado == 'P'}"  class="badge-p">Presente</span>
+                        <span th:if="${a.estado == 'F'}"  class="badge-a">Falta</span>
+                        <span th:if="${a.estado == 'SP'}" class="badge-t">Sin Permiso</span>
+                    </td>
+                    <td th:text="${a.fechaDeIngreso}"></td>
+                    <td th:text="${a.observacion}"></td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <div class="actions">
+                            <a th:href="@{/asistencias/editar/{id}(id=${a.id_asistencia})}" class="btn-warning">Editar</a>
+                            <a th:href="@{/asistencias/eliminar/{id}(id=${a.id_asistencia})}" class="btn-danger" onclick="return confirm('Eliminar?')">Eliminar</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(asistencias)}">
+                    <td colspan="9" class="empty">No hay asistencias para este filtro.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

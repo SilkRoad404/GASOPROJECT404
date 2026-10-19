@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuarios</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <a href="/dashboard">&#8592; Volver al Dashboard</a>
+    </nav>
+    <div class="main">
+        <div class="header">
+            <h1>&#128100; Gestion de Usuarios</h1>
+            <a th:if="${usuarioActual.id == 1}" href="/usuarios/nuevo" class="btn btn-primary">+ Nuevo Usuario</a>
+        </div>
+        <div th:if="${mensaje}" class="alert-success" th:text="${mensaje}"></div>
+        <div th:if="${error}"   class="alert-error"   th:text="${error}"></div>
+        <div class="search-bar">
+            <span>&#128269;</span>
+            <input type="text" id="buscador" placeholder="Buscar por username o rol..." onkeyup="filtrar()"/>
+        </div>
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Username</th><th>Rol</th><th>Editable</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="tablaBody">
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.id}"></td>
+                    <td>
+                        <span th:text="${u.username}"></span>
+                        <span th:if="${u.id == 1}" class="badge-principal">Principal</span>
+                    </td>
+                    <td>
+                        <span th:if="${u.rol == 'ADMIN'}" class="badge-admin">ADMIN</span>
+                        <span th:if="${u.rol == 'USER'}"  class="badge-user">USER</span>
+                    </td>
+                    <td>
+                        <th:block th:if="${usuarioActual.id == 1 and u.id != 1}">
+                            <a th:href="@{/usuarios/toggle-editable/{id}(id=${u.id})}"
+                               th:class="${u.esEditable ? 'btn-toggle-on' : 'btn-toggle-off'}"
+                               th:text="${u.esEditable ? 'Si' : 'No'}"></a>
+                        </th:block>
+                        <span th:if="${u.id == 1}" style="color:#718096;font-size:12px;">—</span>
+                        <span th:if="${usuarioActual.id != 1 and u.id != 1}"
+                              th:text="${u.esEditable ? 'Si' : 'No'}" style="color:#718096;font-size:13px;"></span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <th:block th:if="${u.esEditable == true or usuarioActual.id == 1}">
+                                <a th:href="@{/usuarios/confirmar-editar/{id}(id=${u.id})}" class="btn-warning">Editar</a>
+                            </th:block>
+                            <th:block th:if="${u.id != usuarioActual.id}">
+                                <a th:if="${u.esEditable == true or usuarioActual.id == 1}"
+                                   th:href="@{/usuarios/eliminar/{id}(id=${u.id})}"
+                                   class="btn-danger" onclick="return confirm('Eliminar usuario?')">Eliminar</a>
+                            </th:block>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

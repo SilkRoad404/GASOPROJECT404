@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Alumnos</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <a href="/dashboard">&#8592; Volver al Dashboard</a>
+    </nav>
+    <div class="main">
+        <div class="header">
+            <h1>&#127891; Alumnos</h1>
+            <a sec:authorize="hasRole('ADMIN')" href="/alumnos/nuevo" class="btn btn-primary">+ Nuevo Alumno</a>
+        </div>
+        <div class="search-bar">
+            <span>&#128269;</span>
+            <input type="text" id="buscador" placeholder="Buscar por nombre, apellido, grado o seccion..." onkeyup="filtrar()"/>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Nombres</th><th>Apellidos</th><th>Grado</th><th>Seccion</th>
+                    <th sec:authorize="hasRole('ADMIN')">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody">
+                <tr th:each="a : ${alumnos}">
+                    <td th:text="${a.id_alumno}"></td>
+                    <td th:text="${a.nombres}"></td>
+                    <td th:text="${a.apellidos}"></td>
+                    <td th:with="g=${a.grado}"
+                        th:text="${g == '1RO TDS' ? '1ro Tec. Desarrollo de Software' :
+                                  g == '2 TDS'   ? '2do Tec. Desarrollo de Software' :
+                                  g == '3 TDS'   ? '3ro Tec. Desarrollo de Software' :
+                                  g == '1RO TVC' ? '1ro Tec. Vocacional Contable' :
+                                  g == '2 TVC'   ? '2do Tec. Vocacional Contable' :
+                                  g == '3 TVC'   ? '3ro Tec. Vocacional Contable' :
+                                  g == '1RO GEN' ? '1ro General' :
+                                  g == '2 GEN'   ? '2do General' : g}"></td>
+                    <td th:text="${a.seccion}"></td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <div class="actions">
+                            <a th:href="@{/alumnos/editar/{id}(id=${a.id_alumno})}" class="btn-warning">Editar</a>
+                            <a th:href="@{/alumnos/eliminar/{id}(id=${a.id_alumno})}" class="btn-danger" onclick="return confirm('Eliminar?')">Eliminar</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

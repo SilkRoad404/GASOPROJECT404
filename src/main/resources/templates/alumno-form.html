@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alumno</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <a href="/alumnos">&#8592; Volver a Alumnos</a>
+    </nav>
+    <div class="main" style="max-width:600px;">
+        <div class="card">
+            <h2 th:text="${alumno.id_alumno != null} ? 'Editar Alumno' : 'Nuevo Alumno'"></h2>
+            <form th:action="@{/alumnos/guardar}" th:object="${alumno}" method="post">
+                <input type="hidden" th:field="*{id_alumno}" />
+                <div class="form-group">
+                    <label>Nombres</label>
+                    <input type="text" th:field="*{nombres}" required placeholder="Ingresa los nombres" />
+                </div>
+                <div class="form-group">
+                    <label>Apellidos</label>
+                    <input type="text" th:field="*{apellidos}" required placeholder="Ingresa los apellidos" />
+                </div>
+                <div class="form-group">
+                    <label>Grado</label>
+                    <select th:field="*{grado}" required>
+                        <option value="">Selecciona un grado</option>
+                        <option value="1RO TDS">1ro Tecnico en Desarrollo de Software</option>
+                        <option value="2 TDS">2do Tecnico en Desarrollo de Software</option>
+                        <option value="3 TDS">3ro Tecnico en Desarrollo de Software</option>
+                        <option value="1RO TVC">1ro Tecnico Vocacional Contable</option>
+                        <option value="2 TVC">2do Tecnico Vocacional Contable</option>
+                        <option value="3 TVC">3ro Tecnico Vocacional Contable</option>
+                        <option value="1RO GEN">1ro General</option>
+                        <option value="2 GEN">2do General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Seccion</label>
+                    <select th:field="*{seccion}" required>
+                        <option value="">Selecciona una seccion</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="/alumnos" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

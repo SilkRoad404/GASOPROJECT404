@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Asistencia</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <a href="/asistencias">&#8592; Volver a Asistencias</a>
+    </nav>
+    <div class="main" style="max-width:500px;">
+        <div class="card">
+            <h2>&#9989; Registrar Asistencia</h2>
+            <form th:action="@{/asistencias/guardar}" th:object="${asistencia}" method="post">
+                <input type="hidden" th:field="*{id_asistencia}"/>
+                <div class="form-group">
+                    <label>Alumno</label>
+                    <select th:field="*{id_alumno}" required>
+                        <option value="">Selecciona un alumno</option>
+                        <option th:each="a : ${alumnos}"
+                                th:value="${a.id_alumno}"
+                                th:text="${a.nombres + ' ' + a.apellidos}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Periodo</label>
+                    <select th:field="*{id_trimestre}" required>
+                        <option value="">Selecciona un periodo</option>
+                        <option th:each="t : ${trimestres}"
+                                th:value="${t.id_trimestre}"
+                                th:text="${t.nombre}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select th:field="*{estado}" required>
+                        <option value="">Selecciona estado</option>
+                        <option value="P">P - Presente</option>
+                        <option value="F">F - Falta</option>
+                        <option value="SP">SP - Sin Permiso</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" th:field="*{fechaDeIngreso}" required/>
+                </div>
+                <div class="form-group">
+                    <label>Observacion</label>
+                    <textarea th:field="*{observacion}"
+                              style="width:100%;padding:10px 14px;background:#3d4a5c;border:1px solid #4a5568;border-radius:8px;color:#e2e8f0;font-size:14px;resize:vertical;min-height:80px;"></textarea>
+                </div>
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="/asistencias" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

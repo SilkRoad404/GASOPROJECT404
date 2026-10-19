@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>GASOPRO404</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <div class="nav-right">
+            <span id="reloj"></span>
+            Usuario: <span th:text="${#authentication.name}"></span>
+            <form th:action="@{/logout}" method="post" style="margin:0">
+                <button class="btn-logout" type="submit">Cerrar Sesion</button>
+            </form>
+        </div>
+    </nav>
+    <div class="main">
+        <div class="welcome">
+            <h1>Bienvenido al Dashboard</h1>
+            <p>Selecciona un modulo para comenzar</p>
+        </div>
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-icon blue">&#127891;</div>
+                <div class="stat-info"><h3 th:text="${totalAlumnos}">--</h3><p>Total Alumnos</p></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">&#9989;</div>
+                <div class="stat-info"><h3 th:text="${asistenciasHoy}">--</h3><p>Asistencias Hoy</p></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">&#128197;</div>
+                <div class="stat-info"><h3 th:text="${trimestresActivo}">--</h3><p>Periodo Activo</p></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">&#128100;</div>
+                <div class="stat-info"><h3 th:text="${#lists.size(usuarios)}">--</h3><p>Usuarios</p></div>
+            </div>
+        </div>
+        <div class="bottom">
+            <div class="cards">
+                <a href="/alumnos" class="nav-card alumnos">
+                    <div class="icon">&#127891;</div>
+                    <div class="info"><h3>Alumnos</h3><p>Gestiona el registro de alumnos</p></div>
+                    <div class="arrow">›</div>
+                </a>
+                <a href="/asistencias" class="nav-card asistencias">
+                    <div class="icon">&#9989;</div>
+                    <div class="info"><h3>Asistencias</h3><p>Registra y consulta asistencias</p></div>
+                    <div class="arrow">›</div>
+                </a>
+                <a href="/trimestres" class="nav-card trimestres">
+                    <div class="icon">&#128197;</div>
+                    <div class="info"><h3>Periodos</h3><p>Administra periodos academicos</p></div>
+                    <div class="arrow">›</div>
+                </a>
+                <a href="/reportes" class="nav-card trimestres">
+    <div class="icon">&#128202;</div>
+    <div class="info"><h3>Reportes</h3><p>Genera y envia reportes de asistencia</p></div>
+    <div class="arrow">&#8250;</div>
+</a>
+            </div>
+            <div class="resumen-panel">
+                <h2>&#128202; Resumen del Sistema</h2>
+                <div class="resumen-item">
+                    <div class="dot dot-orange"></div>
+                    <div class="resumen-label">Periodo activo</div>
+                    <div class="resumen-value" th:text="${trimestresActivo}">--</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="dot dot-blue"></div>
+                    <div class="resumen-label">Total de alumnos</div>
+                    <div class="resumen-value" th:text="${totalAlumnos}">--</div>
+                </div>
+                <div class="resumen-item">
+                    <div class="dot dot-green"></div>
+                    <div class="resumen-label">Asistencias registradas hoy</div>
+                    <div class="resumen-value" th:text="${asistenciasHoy}">--</div>
+                </div>
+            </div>
+        </div>
+        <div class="usuarios-section" sec:authorize="hasRole('ADMIN')">
+            <div class="usuarios-header">
+                <h2>&#128100; Gestion de Usuarios</h2>
+                <a th:if="${usuarioActual.id == 1}" href="/usuarios/nuevo" class="btn btn-primary">+ Nuevo Usuario</a>
+            </div>
+            <div th:if="${mensaje}" class="alert-success" th:text="${mensaje}"></div>
+            <div th:if="${error}"   class="alert-error"   th:text="${error}"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Username</th><th>Rol</th><th>Editable</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${usuarios}">
+                        <td th:text="${u.id}"></td>
+                        <td>
+                            <span th:text="${u.username}"></span>
+                            <span th:if="${u.id == 1}" class="badge-principal">Principal</span>
+                        </td>
+                        <td>
+                            <span th:if="${u.rol == 'ADMIN'}" class="badge-admin">ADMIN</span>
+                            <span th:if="${u.rol == 'USER'}"  class="badge-user">USER</span>
+                        </td>
+                        <td>
+                            <th:block th:if="${usuarioActual.id == 1 and u.id != 1}">
+                                <a th:href="@{/usuarios/toggle-editable/{id}(id=${u.id})}"
+                                   th:class="${u.esEditable ? 'btn-toggle-on' : 'btn-toggle-off'}"
+                                   th:text="${u.esEditable ? 'Si' : 'No'}"></a>
+                            </th:block>
+                            <span th:if="${u.id == 1}" style="color:#718096;font-size:12px;">—</span>
+                            <span th:if="${usuarioActual.id != 1 and u.id != 1}"
+                                  th:text="${u.esEditable ? 'Si' : 'No'}" style="color:#718096;font-size:13px;"></span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <th:block th:if="${u.esEditable == true or usuarioActual.id == 1}">
+                                    <a th:href="@{/usuarios/confirmar-editar/{id}(id=${u.id})}" class="btn-warning">Editar</a>
+                                </th:block>
+                                <th:block th:if="${u.id != usuarioActual.id}">
+                                    <a th:if="${u.esEditable == true or usuarioActual.id == 1}"
+                                       th:href="@{/usuarios/eliminar/{id}(id=${u.id})}"
+                                       class="btn-danger"
+                                       onclick="return confirm('Eliminar usuario?')">Eliminar</a>
+                                </th:block>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

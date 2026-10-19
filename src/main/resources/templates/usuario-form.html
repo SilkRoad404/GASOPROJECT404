@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuario</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+<body>
+    <nav class="navbar">
+        <div class="brand">&#128203; Sistema de Asistencia</div>
+        <a href="/dashboard">&#8592; Volver al Dashboard</a>
+    </nav>
+    <div class="main" style="max-width:500px;">
+        <div class="card">
+            <h2 th:text="${usuario.id != null} ? 'Editar Usuario' : 'Nuevo Usuario'"></h2>
+            <form th:action="@{/usuarios/guardar}" th:object="${usuario}" method="post" onsubmit="return validar()">
+                <input type="hidden" th:field="*{id}" />
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" th:field="*{username}" required placeholder="Nombre de usuario" />
+                </div>
+                <div class="form-group">
+                    <label th:text="${usuario.id != null} ? 'Nueva Contrasena (dejar vacio para no cambiar)' : 'Contrasena'"></label>
+                    <input type="password" id="pass1" name="passwordNuevo" th:required="${usuario.id == null}" placeholder="Contrasena" />
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contrasena</label>
+                    <input type="password" id="pass2" placeholder="Repite la contrasena" />
+                    <span class="pass-error" id="passError">Las contrasenas no coinciden</span>
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select th:field="*{rol}">
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="USER">USER</option>
+                    </select>
+                </div>
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="/dashboard" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
